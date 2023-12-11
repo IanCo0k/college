@@ -33,9 +33,9 @@ function Navbar() {
 
   return (
     <nav className="relative sm:mr-12 sm:ml-12 px-4 py-4 flex justify-between items-center">
-      <Link to="/" className="text-xl sm:text-3xl font-bold leading-none">
-        <img src={logo} className='w-16 inline-block' alt="" />
-        <span className='ml-3 text-blue-200'>College Where?</span>
+      <Link to="/" className="text-sm sm:text-3xl font-bold leading-none">
+        <img src={logo} className='w-8 inline-block' alt="" />
+        <span className='hidden ml-3 text-blue-200'>College Where?</span>
       </Link>
       {user ? (
         <div className="lg:inline-block lg:ml-auto">
@@ -57,8 +57,8 @@ function Navbar() {
         </div>
       ) : (
         <>
-          <Link to="/signin" className="hidden lg:inline-block lg:ml-auto lg:mr-3 py-2 px-6 bg-gray-50 hover:bg-gray-100 text-sm text-gray-900 font-bold rounded-xl transition duration-200">Sign In</Link>
-          <Link to="/signup" className="hidden lg:inline-block py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200">Sign up</Link>
+          <Link to="/signin" className=" lg:inline-block lg:ml-auto lg:mr-3 py-2 px-6 bg-gray-50 hover:bg-gray-100 text-sm text-gray-900 font-bold rounded-xl transition duration-200">Sign In</Link>
+          <Link to="/signup" className=" lg:inline-block py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200">Sign up</Link>
         </>
       )}
     </nav>

@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import players from './data/players';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
+import app from './firebaseConfig'
+
+// Initialize Firestore
+const db = getFirestore(app);
+const auth = getAuth(app);
+
 
 export default function App() {
   const [randomPlayer, setRandomPlayer] = useState(null);
@@ -40,13 +48,24 @@ export default function App() {
     setShowDropdown(false); // Hide the dropdown when an option is selected
   };
 
-  const checkGuess = () => {
+  const checkGuess = async () => {
     if (randomPlayer && guess.toLowerCase() === randomPlayer.SCHOOL.toLowerCase()) {
       setIsCorrect(true);
       setStreak(streak + 1);
       setShowCorrectMessage(true);
       chooseRandomPlayer();
       setGuess('');
+  
+      // Check if the user is authenticated
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userDocRef = doc(db, 'users', user.displayName); // Assuming user.displayName is unique
+          await setDoc(userDocRef, { guesses: { [new Date().toISOString()]: randomPlayer.SCHOOL } }, { merge: true });
+        } catch (error) {
+          console.error('Error updating Firestore:', error);
+        }
+      }
     } else {
       setIsCorrect(false);
       setStreak(0);
@@ -54,6 +73,7 @@ export default function App() {
       setIncorrectSchool(randomPlayer?.SCHOOL);
     }
   };
+  
 
   const tryAgain = () => {
     window.location.reload();

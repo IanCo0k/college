@@ -8,9 +8,14 @@ import Stats from './components/Stats.jsx';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css'
 import ReactGA from 'react-ga';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import firebaseConfig from './firebaseConfig';
 
 // Initialize Google Analytics with your Measurement ID
 ReactGA.initialize('G-V0N16ZXFBZ');
+
 
 const Main = () => {
   useEffect(() => {
