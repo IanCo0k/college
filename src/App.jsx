@@ -93,6 +93,39 @@ export default function App() {
       setIsCorrect(false);
       setShowCorrectMessage(false);
       setIncorrectSchool(randomPlayer?.SCHOOL);
+
+        // Update the streak in Firestore and reset it to 0
+        const user = auth.currentUser; // Define user here as well
+        if (user) {
+          try {
+            const streaksDocRef = doc(db, 'users', user.displayName); // Assuming user.displayName is unique
+        
+            // Get the existing data
+            const streaksDocSnap = await getDoc(streaksDocRef);
+        
+            // Check if the document exists
+            if (streaksDocSnap.exists()) {
+              const existingData = streaksDocSnap.data();
+        
+              // Check if the streaks field exists in the existing data
+              if (existingData.streaks) {
+                // Add the new streak to the existing list
+                existingData.streaks.push(streak);
+              } else {
+                // Create a new list with the streak
+                existingData.streaks = [streak];
+              }
+        
+              // Update the document with the updated data
+              await setDoc(streaksDocRef, existingData);
+            } else {
+              // If the document doesn't exist, create a new one with the 'streaks' field as a list containing the streak
+              await setDoc(streaksDocRef, { streaks: [streak] });
+            }
+          } catch (error) {
+            console.error('Error updating streak in Firestore:', error);
+          }
+        }
   
       // Reset the streak state to 0
       setStreak(0);
