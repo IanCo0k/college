@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import players from './data/players';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
-import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, getDoc } from 'firebase/firestore';
 import app from './firebaseConfig'
 
 // Initialize Firestore
@@ -61,18 +61,46 @@ export default function App() {
       if (user) {
         try {
           const userDocRef = doc(db, 'users', user.displayName); // Assuming user.displayName is unique
-          await setDoc(userDocRef, { guesses: { [new Date().toISOString()]: randomPlayer.SCHOOL } }, { merge: true });
+  
+          // Fetch the existing user data
+          const userDocSnap = await getDoc(userDocRef);
+          let userData = {};
+  
+          if (userDocSnap.exists()) {
+            userData = userDocSnap.data();
+          }
+  
+          // Update the guesses data
+          if (!userData.guesses) {
+            userData.guesses = {};
+          }
+  
+          // Increment the count for the guessed school
+          const schoolName = randomPlayer.SCHOOL;
+          if (userData.guesses[schoolName]) {
+            userData.guesses[schoolName]++;
+          } else {
+            userData.guesses[schoolName] = 1;
+          }
+  
+          // Update the document with the updated data
+          await setDoc(userDocRef, userData);
         } catch (error) {
           console.error('Error updating Firestore:', error);
         }
       }
     } else {
       setIsCorrect(false);
-      setStreak(0);
       setShowCorrectMessage(false);
       setIncorrectSchool(randomPlayer?.SCHOOL);
+  
+      // Reset the streak state to 0
+      setStreak(0);
     }
   };
+  
+  
+  
   
 
   const tryAgain = () => {
